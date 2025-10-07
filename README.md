@@ -9,6 +9,7 @@
 - 📚 **Mathematical Derivations**: Step-by-step solutions using the Lagrange method
 - 💡 **Live Explanations**: Dynamic explanations that update as you change parameters
 - ✅ **Optimality Verification**: Visual and numerical confirmation that MRS = PX/PY at the tangency point
+- 🤖 **AI Economics Assistant**: Chat with an AI tutor powered by OpenAI to ask questions and get parameter suggestions
 
 ## Economic Concepts Covered
 
@@ -46,6 +47,38 @@ The app will open in your default web browser. Use the sidebar sliders to adjust
 
 Watch how the graphs and calculations update in real-time!
 
+### AI Chat Assistant
+
+To enable the AI Economics Assistant feature:
+
+1. Get an OpenAI API key from [OpenAI Platform](https://platform.openai.com/api-keys)
+
+2. Configure the API key using one of these methods:
+
+   **Option 1: Environment Variable**
+   ```bash
+   export OPENAI_API_KEY='your-api-key-here'
+   streamlit run app.py
+   ```
+
+   **Option 2: Streamlit Secrets**
+   Create `.streamlit/secrets.toml` in your project directory:
+   ```toml
+   OPENAI_API_KEY = "your-api-key-here"
+   ```
+
+3. The AI assistant can:
+   - Answer questions about microeconomic concepts
+   - Explain the current simulation state
+   - Suggest parameter changes to explore different scenarios
+   - Provide educational guidance on consumer theory
+
+**Example questions:**
+- "What happens if I increase my income?"
+- "Why is the tangency point optimal?"
+- "Show me a scenario where I prefer good Y more"
+- "Explain the marginal rate of substitution"
+
 ## Educational Use
 
 This tool is perfect for:
@@ -61,6 +94,8 @@ This tool is perfect for:
 - numpy >= 1.24.0
 - matplotlib >= 3.7.0
 - sympy >= 1.12
+- openai >= 1.0.0 (for AI chat assistant)
+- python-dotenv >= 1.0.0 (for environment variable management)
 
 ## License
 

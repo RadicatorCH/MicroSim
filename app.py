@@ -3,6 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import FancyBboxPatch
 import sympy as sp
+import os
+from openai import OpenAI
+import json
 
 # Set page configuration
 st.set_page_config(page_title="MicroSim - Microeconomics Visualizer", layout="wide", page_icon="📊")
@@ -286,6 +289,189 @@ with st.expander("📖 Learn More: Key Economic Concepts"):
     - For Cobb-Douglas: X* = (α·I)/PX and Y* = ((1-α)·I)/PY
     - These are the solutions to the consumer's optimization problem
     - Note: Consumer spends exactly α·I on good X and (1-α)·I on good Y regardless of prices!
+    """)
+
+# AI Chat Assistant Section
+st.markdown("---")
+st.header("🤖 AI Economics Assistant")
+
+st.markdown("""
+Ask the AI assistant questions about microeconomics, the simulation, or request parameter adjustments!
+The assistant has knowledge of all economic concepts covered in this app.
+""")
+
+# Load knowledge base
+@st.cache_data
+def load_knowledge_base():
+    try:
+        with open('knowledge_base.txt', 'r') as f:
+            return f.read()
+    except FileNotFoundError:
+        return "Knowledge base not found."
+
+knowledge_base = load_knowledge_base()
+
+# Initialize OpenAI client
+def get_openai_client():
+    api_key = os.getenv("OPENAI_API_KEY") or st.secrets.get("OPENAI_API_KEY", None)
+    if api_key:
+        return OpenAI(api_key=api_key)
+    return None
+
+client = get_openai_client()
+
+# Initialize session state for chat history
+if 'chat_history' not in st.session_state:
+    st.session_state.chat_history = []
+
+if 'suggested_params' not in st.session_state:
+    st.session_state.suggested_params = None
+
+def get_ai_response(user_message, current_params):
+    """Get response from OpenAI using RAG approach"""
+    if not client:
+        return "⚠️ OpenAI API key not configured. Please set OPENAI_API_KEY environment variable or add it to Streamlit secrets."
+    
+    # Build context with current simulation state
+    context = f"""You are an expert economics tutor helping students understand microeconomic concepts through an interactive simulation.
+
+Current Simulation State:
+- Alpha (α): {current_params['alpha']:.2f} (preference for good X)
+- Income (I): ${current_params['income']:.2f}
+- Price of X (PX): ${current_params['px']:.2f}
+- Price of Y (PY): ${current_params['py']:.2f}
+- Optimal X: {current_params['x_star']:.2f} units
+- Optimal Y: {current_params['y_star']:.2f} units
+- Maximum Utility: {current_params['u_star']:.3f}
+
+Knowledge Base:
+{knowledge_base}
+
+Instructions:
+1. Answer questions about microeconomic concepts using the knowledge base
+2. Explain how the current parameters affect the simulation
+3. If the user asks to change parameters or see specific scenarios, suggest parameter values in your response using this JSON format at the end:
+   PARAMS: {{"alpha": value, "income": value, "px": value, "py": value}}
+   Only include parameters that should change (all optional).
+4. Be conversational, educational, and encouraging
+5. Use examples from the current simulation state when relevant
+6. If asked about effects of changes, explain both the mathematical and intuitive reasoning
+
+User Question: {user_message}"""
+
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "You are an expert economics tutor specializing in microeconomic theory and consumer choice. You help students understand concepts through clear explanations and interactive learning."},
+                {"role": "user", "content": context}
+            ],
+            temperature=0.7,
+            max_tokens=1000
+        )
+        
+        answer = response.choices[0].message.content
+        
+        # Check if response contains parameter suggestions
+        if "PARAMS:" in answer:
+            parts = answer.split("PARAMS:")
+            text_response = parts[0].strip()
+            try:
+                param_json = parts[1].strip()
+                suggested_params = json.loads(param_json)
+                return text_response, suggested_params
+            except:
+                return answer, None
+        
+        return answer, None
+        
+    except Exception as e:
+        return f"❌ Error communicating with AI: {str(e)}", None
+
+# Chat interface
+if client:
+    # Display chat history
+    for message in st.session_state.chat_history:
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
+    
+    # Chat input
+    if user_input := st.chat_input("Ask me anything about microeconomics or the simulation..."):
+        # Add user message to history
+        st.session_state.chat_history.append({"role": "user", "content": user_input})
+        
+        # Display user message
+        with st.chat_message("user"):
+            st.markdown(user_input)
+        
+        # Get current parameters for context
+        current_params = {
+            'alpha': alpha,
+            'income': income,
+            'px': px,
+            'py': py,
+            'x_star': x_star,
+            'y_star': y_star,
+            'u_star': u_star
+        }
+        
+        # Get AI response
+        with st.chat_message("assistant"):
+            with st.spinner("Thinking..."):
+                ai_response, suggested_params = get_ai_response(user_input, current_params)
+                st.markdown(ai_response)
+                
+                # If AI suggested parameter changes, show them
+                if suggested_params:
+                    st.session_state.suggested_params = suggested_params
+                    st.info("💡 **Suggested Parameter Changes:**")
+                    for param, value in suggested_params.items():
+                        st.write(f"- Set {param} to {value}")
+                    st.write("👆 Adjust the sliders in the sidebar to see this scenario!")
+        
+        # Add assistant response to history
+        st.session_state.chat_history.append({"role": "assistant", "content": ai_response})
+        
+        # Rerun to update chat display
+        st.rerun()
+    
+    # Clear chat button
+    if st.button("🗑️ Clear Chat History"):
+        st.session_state.chat_history = []
+        st.session_state.suggested_params = None
+        st.rerun()
+    
+    # Example questions
+    with st.expander("💬 Example Questions to Ask"):
+        st.markdown("""
+        - "What happens if I increase my income?"
+        - "Why is the tangency point optimal?"
+        - "Show me a scenario where I prefer good Y more"
+        - "What is the marginal rate of substitution?"
+        - "How do price changes affect my consumption?"
+        - "Explain the Lagrange method in simple terms"
+        - "What if both goods cost the same?"
+        - "Set up a scenario where goods have very different prices"
+        """)
+else:
+    st.warning("""
+    ⚠️ **OpenAI API Key Required**
+    
+    To use the AI assistant, you need to configure your OpenAI API key:
+    
+    **Option 1: Environment Variable**
+    ```bash
+    export OPENAI_API_KEY='your-api-key-here'
+    streamlit run app.py
+    ```
+    
+    **Option 2: Streamlit Secrets**
+    Create `.streamlit/secrets.toml`:
+    ```toml
+    OPENAI_API_KEY = "your-api-key-here"
+    ```
+    
+    Get your API key from: https://platform.openai.com/api-keys
     """)
 
 # Footer
