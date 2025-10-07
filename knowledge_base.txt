@@ -1,0 +1,264 @@
+# MicroSim Knowledge Base for RAG System
+
+## Overview
+MicroSim is an interactive microeconomics visualization tool that helps users understand consumer choice theory, optimization, and the Cobb-Douglas utility function framework.
+
+## Core Economic Concepts
+
+### 1. Cobb-Douglas Utility Function
+- Formula: U(X,Y) = X^α · Y^(1-α)
+- α (alpha) is the preference parameter for good X, ranging from 0.1 to 0.9
+- (1-α) is the preference parameter for good Y
+- Higher α means stronger preference for good X
+- The function exhibits diminishing marginal utility
+- It's homogeneous of degree 1 (constant returns to scale)
+- α represents the share of income spent on good X
+- Example: If α = 0.5, consumer values both goods equally
+- Example: If α = 0.7, consumer prefers good X more strongly
+
+### 2. Budget Constraint
+- Formula: PX·X + PY·Y = I
+- PX is the price of good X (ranges from 0.5 to 10)
+- PY is the price of good Y (ranges from 0.5 to 10)
+- I is the consumer's income (ranges from 10 to 200)
+- The budget line shows all affordable consumption bundles
+- X-intercept: I/PX (maximum X if no Y is purchased)
+- Y-intercept: I/PY (maximum Y if no X is purchased)
+- Slope of budget line: -PX/PY (price ratio)
+- When income increases, the budget line shifts outward parallel
+- When PX increases, the budget line rotates inward on X-axis
+- When PY increases, the budget line rotates inward on Y-axis
+
+### 3. Marginal Rate of Substitution (MRS)
+- Formula: MRS = -MUx/MUy = -(α·Y)/((1-α)·X)
+- MRS measures willingness to trade Y for X
+- It's the negative slope of the indifference curve
+- MRS = ratio of marginal utilities
+- MRS diminishes as we move down along an indifference curve (convexity)
+- At optimal point, MRS equals the price ratio: MRS = -PX/PY
+- This tangency condition ensures utility maximization
+
+### 4. Lagrange Method for Optimization
+- The consumer maximizes utility subject to budget constraint
+- Lagrangian: L(X,Y,λ) = X^α · Y^(1-α) + λ(I - PX·X - PY·Y)
+- λ (lambda) is the Lagrange multiplier
+- λ represents the marginal utility of income (shadow price of the constraint)
+- First-order conditions (FOCs):
+  - ∂L/∂X = α·X^(α-1)·Y^(1-α) - λ·PX = 0
+  - ∂L/∂Y = (1-α)·X^α·Y^(-α) - λ·PY = 0
+  - ∂L/∂λ = I - PX·X - PY·Y = 0
+- These conditions ensure no improvement is possible
+
+### 5. Marshallian Demand Functions
+- Optimal consumption of X: X* = (α·I)/PX
+- Optimal consumption of Y: Y* = ((1-α)·I)/PY
+- These are the solutions to the consumer's optimization problem
+- Demand for X is:
+  - Proportional to income (income elasticity = 1)
+  - Proportional to preference parameter α
+  - Inversely proportional to its price (price elasticity = -1)
+- Consumer spends exactly α·I on good X regardless of prices
+- Consumer spends exactly (1-α)·I on good Y regardless of prices
+- Total spending: PX·X* + PY·Y* = I (entire budget is spent)
+
+### 6. Indifference Curves
+- Show combinations of X and Y yielding equal utility
+- Formula for indifference curve: Y = (U/X^α)^(1/(1-α))
+- Higher curves represent higher utility levels
+- Properties:
+  - Downward sloping (more of one good, less of the other)
+  - Convex to the origin (diminishing MRS)
+  - Never intersect
+  - Further from origin means higher utility
+- The optimal bundle is where budget line is tangent to highest indifference curve
+
+### 7. Optimal Bundle Properties
+- Maximum utility: U* = (X*)^α · (Y*)^(1-α)
+- At optimum, MRS = price ratio
+- The consumer exhausts their entire budget
+- It's the tangency point between budget line and indifference curve
+- This point represents the best affordable combination
+
+## Parameter Effects
+
+### Alpha (α) Changes
+- Increasing α:
+  - Shifts consumption toward good X
+  - Increases X* = (α·I)/PX
+  - Decreases Y* = ((1-α)·I)/PY
+  - Changes shape of indifference curves (flatter)
+  - Optimal point moves along the budget line
+- When α > 0.5: stronger preference for X
+- When α < 0.5: stronger preference for Y
+- When α = 0.5: balanced preferences
+
+### Income (I) Changes
+- Increasing income:
+  - Shifts budget line outward (parallel shift)
+  - Both X* and Y* increase proportionally
+  - Allows consumer to reach higher indifference curve
+  - Price ratio remains unchanged
+  - Both goods are normal goods
+- Doubling income doubles both X* and Y*
+
+### Price of X (PX) Changes
+- Increasing PX:
+  - Budget line rotates inward on X-axis
+  - X* = (α·I)/PX decreases
+  - Y* remains at ((1-α)·I)/PY (unchanged)
+  - Optimal point moves along indifference curve
+  - Budget line becomes steeper
+  - Can afford less of both goods if originally consuming both
+- Substitution effect: consumer substitutes away from more expensive good
+- Income effect: real income decreases
+
+### Price of Y (PY) Changes
+- Increasing PY:
+  - Budget line rotates inward on Y-axis
+  - Y* = ((1-α)·I)/PY decreases
+  - X* remains at (α·I)/PX (unchanged)
+  - Optimal point moves along indifference curve
+  - Budget line becomes flatter
+  - Can afford less of both goods if originally consuming both
+
+## Common User Questions
+
+### How do I maximize utility?
+The app automatically calculates the utility-maximizing bundle using the Marshallian demand functions. The optimal point is where the budget line is tangent to the highest possible indifference curve.
+
+### What happens if I increase income?
+You can afford more of both goods. The budget line shifts outward parallel to the original line. Both X* and Y* increase proportionally to the income increase.
+
+### What happens if good X becomes more expensive?
+The budget line rotates inward on the X-axis, becoming steeper. You'll purchase less X (X* decreases) but the same amount of Y.
+
+### Why is the tangency point optimal?
+At the tangency point, your willingness to trade (MRS) equals the market rate of trade (price ratio). Any other point either violates the budget constraint or provides lower utility.
+
+### How do preferences affect consumption?
+The α parameter controls preferences. Higher α means you prefer good X more, leading to higher X* and lower Y*. The consumer always spends α fraction of income on X.
+
+### What if both goods have the same price?
+When PX = PY, the budget line has slope -1. Your consumption choice depends purely on your preferences (α). You'll buy more of whichever good you prefer.
+
+### Can I consume fractional units?
+Yes, the model allows fractional consumption. In reality, this represents average consumption over time or divisible goods (like gallons of gas, hours of entertainment).
+
+## Visualization Elements
+
+### Budget Line (Red)
+- Shows all affordable bundles
+- Straight line from (I/PX, 0) to (0, I/PY)
+- Slope: -PX/PY
+
+### Indifference Curves (Blue)
+- Multiple curves shown at different utility levels
+- Darker blue curve is optimal (tangent to budget)
+- Gray curve shows unattainable higher utility
+- Lighter curves show lower utility levels
+
+### Optimal Point (Red Dot)
+- Located at (X*, Y*)
+- Where budget line touches highest indifference curve
+- Marked with annotation showing exact coordinates
+
+### Tangent Line (Green Dashed)
+- Shows slope at optimal point
+- Confirms MRS = price ratio
+- Demonstrates tangency condition
+
+## Mathematical Verification
+
+### Checking Optimality
+1. Calculate X* = (α·I)/PX and Y* = ((1-α)·I)/PY
+2. Verify budget is exhausted: PX·X* + PY·Y* = I ✓
+3. Calculate MRS at (X*, Y*): MRS = -(α·Y*)/((1-α)·X*)
+4. Calculate price ratio: -PX/PY
+5. Verify MRS = -PX/PY ✓
+6. If both conditions hold, the point is optimal
+
+### Computing Utility
+- Substitute optimal values into utility function
+- U* = (X*)^α · (Y*)^(1-α)
+- This is the maximum attainable utility given the constraints
+
+## Educational Applications
+
+### For Students
+- Experiment with sliders to see real-time effects
+- Observe how optimal bundles change with parameters
+- Verify tangency condition visually and numerically
+- Understand trade-offs between goods
+- Learn constrained optimization intuitively
+
+### For Instructors
+- Demonstrate consumer theory concepts dynamically
+- Show comparative statics (effects of parameter changes)
+- Illustrate Lagrange method step-by-step
+- Verify theoretical predictions visually
+- Engage students with interactive learning
+
+## Advanced Topics
+
+### Expenditure Shares
+- Share spent on X: PX·X*/I = α (constant!)
+- Share spent on Y: PY·Y*/I = (1-α) (constant!)
+- This is a special property of Cobb-Douglas preferences
+- Expenditure shares are independent of prices
+
+### Income and Substitution Effects
+- For Cobb-Douglas, income and substitution effects work together
+- When price increases, quantity demanded always decreases
+- No Giffen good behavior possible
+- Both goods are normal goods (demand increases with income)
+
+### Elasticities
+- Income elasticity of demand: 1 for both goods
+- Own-price elasticity: -1 for both goods
+- Cross-price elasticity: 0 (demand for X independent of PY and vice versa)
+
+## Troubleshooting
+
+### Why can't I reach certain indifference curves?
+The gray indifference curve represents unattainable utility levels given your budget. To reach it, you need higher income or lower prices.
+
+### Why does the optimal point move when I change α?
+Changing α changes your preferences, which changes how you allocate your budget between the two goods.
+
+### What if prices are very different?
+When one good is much more expensive, you'll consume less of it and more of the cheaper good. The exact amounts depend on both relative prices and your preferences (α).
+
+## Technical Details
+
+### Computation Methods
+- Optimal quantities calculated analytically using Marshallian demand
+- Indifference curves plotted by solving Y = (U/X^α)^(1/(1-α))
+- Budget line plotted as Y = (I - PX·X)/PY
+- All calculations use NumPy for efficiency
+
+### Visualization Range
+- X-axis: 0 to min(2·I/PX, 150)
+- Y-axis: 0 to min(2·I/PY, 150)
+- Multiple indifference curves at utility levels: 0.5U*, 0.7U*, 0.85U*, U*, 1.15U*
+
+### Default Parameters
+- α = 0.5 (equal preferences)
+- I = 100 (income)
+- PX = 2 (price of X)
+- PY = 2 (price of Y)
+- These yield X* = 25 and Y* = 25
+
+## Glossary
+
+- **Utility**: Satisfaction or happiness from consumption
+- **Indifference Curve**: Combinations yielding equal utility
+- **Budget Constraint**: Income limitation on consumption
+- **Marginal Utility**: Additional utility from one more unit
+- **MRS**: Rate of trading one good for another
+- **Tangency**: Point where two curves just touch
+- **Optimization**: Finding the best solution
+- **Marshallian Demand**: Optimal quantity as function of prices and income
+- **Lagrange Multiplier**: Shadow price of constraint
+- **First-Order Conditions**: Equations that must hold at optimum
+- **Convexity**: Bowed-inward shape of indifference curves
+- **Normal Good**: Demand increases with income
