@@ -45,3 +45,4 @@ Thumbs.db
 # Test files
 /tmp/
 *.log
+EcoSim/node_modules/
