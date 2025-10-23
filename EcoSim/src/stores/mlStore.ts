@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { microSimAPI, SimulationStatus, PersonData, CompanyData, RegionData, MLPrediction } from '../services/microSimAPI'
+import { supabaseMLAPI, SimulationStatus, MLPrediction, PersonFeatures } from '../services/supabaseAPI'
 
 interface MLDataState {
   // Simulation Status
@@ -8,14 +8,15 @@ interface MLDataState {
   isLoading: boolean
   
   // ML Data
-  personData: PersonData[]
-  companyData: CompanyData[]
-  regionData: RegionData[]
+  personData: any[]
+  companyData: any[]
+  regionData: any[]
   
   // ML Predictions
   predictions: {
     income: MLPrediction | null
     productivity: MLPrediction | null
+    credit: MLPrediction | null
   }
   
   // Analysis Results
@@ -41,8 +42,9 @@ interface MLDataState {
   stopSimulation: () => Promise<void>
   refreshSimulationStatus: () => Promise<void>
   refreshMLData: () => Promise<void>
-  predictIncome: (features: Record<string, number>) => Promise<void>
-  predictProductivity: (features: Record<string, number>) => Promise<void>
+  predictIncome: (features: PersonFeatures) => Promise<void>
+  predictProductivity: (features: PersonFeatures) => Promise<void>
+  predictCreditWorthiness: (features: PersonFeatures) => Promise<void>
   analyzePersonTrends: () => Promise<void>
   analyzeCompanyPerformance: () => Promise<void>
   setLoading: (loading: boolean) => void
@@ -59,6 +61,7 @@ export const useMLStore = create<MLDataState>((set, get) => ({
   predictions: {
     income: null,
     productivity: null,
+    credit: null,
   },
   analysisResults: {
     personTrends: null,
@@ -68,7 +71,7 @@ export const useMLStore = create<MLDataState>((set, get) => ({
   // Actions
   checkBackendConnection: async () => {
     try {
-      const isConnected = await microSimAPI.isBackendAvailable()
+      const isConnected = await supabaseMLAPI.healthCheck()
       set({ isBackendConnected: isConnected })
       
       if (isConnected) {
@@ -83,8 +86,10 @@ export const useMLStore = create<MLDataState>((set, get) => ({
   startSimulation: async () => {
     set({ isLoading: true })
     try {
-      await microSimAPI.startSimulation()
-      await get().refreshSimulationStatus()
+      const result = await supabaseMLAPI.startSimulation()
+      if (result.success) {
+        await get().refreshSimulationStatus()
+      }
     } catch (error) {
       console.error('Failed to start simulation:', error)
     } finally {
@@ -95,8 +100,10 @@ export const useMLStore = create<MLDataState>((set, get) => ({
   stopSimulation: async () => {
     set({ isLoading: true })
     try {
-      await microSimAPI.stopSimulation()
-      await get().refreshSimulationStatus()
+      const result = await supabaseMLAPI.stopSimulation()
+      if (result.success) {
+        await get().refreshSimulationStatus()
+      }
     } catch (error) {
       console.error('Failed to stop simulation:', error)
     } finally {
@@ -106,7 +113,7 @@ export const useMLStore = create<MLDataState>((set, get) => ({
 
   refreshSimulationStatus: async () => {
     try {
-      const status = await microSimAPI.getSimulationStatus()
+      const status = await supabaseMLAPI.getSimulationStatus()
       set({ simulationStatus: status })
     } catch (error) {
       console.error('Failed to refresh simulation status:', error)
@@ -117,15 +124,15 @@ export const useMLStore = create<MLDataState>((set, get) => ({
     set({ isLoading: true })
     try {
       const [personData, companyData, regionData] = await Promise.all([
-        microSimAPI.getPersonData(),
-        microSimAPI.getCompanyData(),
-        microSimAPI.getRegionData(),
+        supabaseMLAPI.getMLData('persons'),
+        supabaseMLAPI.getMLData('companies'),
+        supabaseMLAPI.getMLData('regions'),
       ])
       
       set({ 
-        personData,
-        companyData,
-        regionData,
+        personData: personData.data,
+        companyData: companyData.data,
+        regionData: regionData.data,
       })
     } catch (error) {
       console.error('Failed to refresh ML data:', error)
@@ -134,9 +141,9 @@ export const useMLStore = create<MLDataState>((set, get) => ({
     }
   },
 
-  predictIncome: async (features: Record<string, number>) => {
+  predictIncome: async (features: PersonFeatures) => {
     try {
-      const prediction = await microSimAPI.predictIncome(features)
+      const prediction = await supabaseMLAPI.predictIncome(features)
       set(state => ({
         predictions: {
           ...state.predictions,
@@ -148,9 +155,9 @@ export const useMLStore = create<MLDataState>((set, get) => ({
     }
   },
 
-  predictProductivity: async (features: Record<string, number>) => {
+  predictProductivity: async (features: PersonFeatures) => {
     try {
-      const prediction = await microSimAPI.predictProductivity(features)
+      const prediction = await supabaseMLAPI.predictProductivity(features)
       set(state => ({
         predictions: {
           ...state.predictions,
@@ -162,13 +169,42 @@ export const useMLStore = create<MLDataState>((set, get) => ({
     }
   },
 
+  predictCreditWorthiness: async (features: PersonFeatures) => {
+    try {
+      const prediction = await supabaseMLAPI.predictCreditWorthiness(features)
+      set(state => ({
+        predictions: {
+          ...state.predictions,
+          credit: prediction,
+        }
+      }))
+    } catch (error) {
+      console.error('Credit worthiness prediction failed:', error)
+    }
+  },
+
   analyzePersonTrends: async () => {
     try {
-      const trends = await microSimAPI.analyzePersonTrends()
+      // Simple trend analysis based on available data
+      const { personData } = get()
+      if (personData.length === 0) return
+
+      const ticks = personData.map((p: any) => p.tick).sort((a, b) => a - b)
+      const income_trend = personData.map((p: any) => p.income)
+      const productivity_trend = personData.map((p: any) => p.productivity)
+      const education_trend = personData.map((p: any) => p.education)
+      const health_trend = personData.map((p: any) => p.health)
+
       set(state => ({
         analysisResults: {
           ...state.analysisResults,
-          personTrends: trends,
+          personTrends: {
+            income_trend,
+            productivity_trend,
+            education_trend,
+            health_trend,
+            ticks,
+          },
         }
       }))
     } catch (error) {
@@ -178,11 +214,24 @@ export const useMLStore = create<MLDataState>((set, get) => ({
 
   analyzeCompanyPerformance: async () => {
     try {
-      const performance = await microSimAPI.analyzeCompanyPerformance()
+      // Simple performance analysis based on available data
+      const { companyData } = get()
+      if (companyData.length === 0) return
+
+      const ticks = companyData.map((c: any) => c.tick).sort((a, b) => a - b)
+      const profit_trend = companyData.map((c: any) => c.account_balance)
+      const productivity_trend = companyData.map((c: any) => c.avg_employee_quality)
+      const employee_trend = companyData.map((c: any) => c.employee_count)
+
       set(state => ({
         analysisResults: {
           ...state.analysisResults,
-          companyPerformance: performance,
+          companyPerformance: {
+            profit_trend,
+            productivity_trend,
+            employee_trend,
+            ticks,
+          },
         }
       }))
     } catch (error) {

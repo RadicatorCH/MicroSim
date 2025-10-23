@@ -1,0 +1,46 @@
+{
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "framework": "vite",
+  "outputDirectory": "dist",
+  "regions": ["fra1", "iad1", "sin1"],
+  "functions": {
+    "app/api/**/*.ts": {
+      "runtime": "nodejs18.x"
+    }
+  },
+  "env": {
+    "SUPABASE_URL": "https://xejdgeizdskfvuxvzaxt.supabase.co",
+    "SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhlamRnZWl6ZHNrZnZ1eHZ6YXh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjEyMjEwNTQsImV4cCI6MjA3Njc5NzA1NH0.VnJGqj8lVcG7OjfUWEOMy3r8yCpOloz_i_tKd1GXx_E"
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/ml/(.*)",
+      "destination": "https://xejdgeizdskfvuxvzaxt.supabase.co/functions/v1/ml-api/api/ml/$1"
+    },
+    {
+      "source": "/api/simulation/(.*)",
+      "destination": "https://xejdgeizdskfvuxvzaxt.supabase.co/functions/v1/ml-api/api/simulation/$1"
+    }
+  ]
+}

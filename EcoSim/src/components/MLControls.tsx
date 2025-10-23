@@ -1,6 +1,7 @@
 import React from 'react'
 import { Play, Pause, Square, RefreshCw, Brain, Database } from 'lucide-react'
 import { useMLStore } from '../stores/mlStore'
+import { supabaseMLAPI } from '../services/supabaseAPI'
 
 interface MLControlsProps {
   className?: string
@@ -19,11 +20,29 @@ export const MLControls: React.FC<MLControlsProps> = ({ className = '' }) => {
   } = useMLStore()
 
   const handleStart = async () => {
-    await startSimulation()
+    try {
+      const result = await supabaseMLAPI.startSimulation()
+      if (result.success) {
+        await refreshSimulationStatus()
+      } else {
+        console.error('Failed to start simulation:', result.message)
+      }
+    } catch (error) {
+      console.error('Error starting simulation:', error)
+    }
   }
 
   const handleStop = async () => {
-    await stopSimulation()
+    try {
+      const result = await supabaseMLAPI.stopSimulation()
+      if (result.success) {
+        await refreshSimulationStatus()
+      } else {
+        console.error('Failed to stop simulation:', result.message)
+      }
+    } catch (error) {
+      console.error('Error stopping simulation:', error)
+    }
   }
 
   const handleRefresh = async () => {
@@ -34,7 +53,10 @@ export const MLControls: React.FC<MLControlsProps> = ({ className = '' }) => {
   }
 
   const handleReconnect = async () => {
-    await checkBackendConnection()
+    const isConnected = await supabaseMLAPI.healthCheck()
+    if (isConnected) {
+      await refreshSimulationStatus()
+    }
   }
 
   return (

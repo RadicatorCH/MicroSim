@@ -1,0 +1,9 @@
+{
+  "name": "ecosim-ml-api",
+  "version": "1.0.0",
+  "description": "Supabase Edge Function for ML API",
+  "main": "index.ts",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.0.0"
+  }
+}

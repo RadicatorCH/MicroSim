@@ -1,0 +1,24 @@
+{
+  "name": "microsim-hybrid-ml",
+  "version": "1.0.0",
+  "description": "State-of-the-art hybrid ML economic simulation system",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "api"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "deploy": "vercel deploy",
+    "deploy:frontend": "vercel deploy frontend",
+    "deploy:api": "vercel deploy api"
+  },
+  "devDependencies": {
+    "turbo": "^1.10.0",
+    "@vercel/related-projects": "^0.0.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
