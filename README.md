@@ -1,6 +1,10 @@
 # MicroSim
 
-📊 **MicroSim** is an interactive Streamlit application that helps students visualize fundamental microeconomic concepts including the Lagrange method, Marshallian demand, indifference curves, and budget constraints.
+📊 **MicroSim** is a comprehensive economics education toolkit with two main components:
+
+1. **Interactive Microeconomics Visualizer** - A Streamlit application that helps students visualize fundamental microeconomic concepts including the Lagrange method, Marshallian demand, indifference curves, and budget constraints.
+
+2. **Modular Economic Simulation** - A complete, object-oriented Python simulation of a multi-national economy with production chains, banking systems, and fiscal policy. Perfect for understanding macroeconomic dynamics and supply chain management.
 
 ## Features
 
@@ -13,11 +17,21 @@
 
 ## Economic Concepts Covered
 
+### Microeconomics Visualizer
 1. **Cobb-Douglas Utility Function**: U(X,Y) = X^α · Y^(1-α)
 2. **Budget Constraint**: PX·X + PY·Y = I
 3. **Marginal Rate of Substitution (MRS)**: -MUx/MUy
 4. **Lagrange Method**: Constrained optimization technique
 5. **Marshallian Demand Functions**: X* = (α·I)/PX and Y* = ((1-α)·I)/PY
+
+### Economic Simulation
+1. **Supply Chains**: Multi-stage production (raw materials → intermediate goods → final products)
+2. **Labor Economics**: Worker productivity based on education and health
+3. **Corporate Finance**: Business operations, wages, depreciation, profits
+4. **Fiscal Policy**: Taxation and subsidies
+5. **Monetary Policy**: Central banking and interest rate management
+6. **Regional Economics**: Migration and resource distribution
+7. **Banking System**: Credit markets and financial intermediation
 
 ## Installation
 
@@ -27,16 +41,42 @@
    cd MicroSim
    ```
 
-2. Install dependencies:
+2. Install dependencies (for Streamlit app only):
    ```bash
    pip install -r requirements.txt
    ```
 
 ## Usage
 
-Run the Streamlit app:
+### Microeconomics Visualizer (Streamlit App)
+
+Run the interactive Streamlit app:
 ```bash
 streamlit run app.py
+```
+
+### Economic Simulation
+
+Run the modular economic simulation (no dependencies required):
+```bash
+python economic_simulation.py
+```
+
+This will run a 5-tick simulation of a multi-national economy with:
+- 2 nations (Germany and Austria)
+- 3 regions with different resource endowments
+- 4 companies forming a supply chain (wheat → flour → bread)
+- 20 people with varying education and income levels
+- Banking system with central bank
+- Fiscal policy with taxes and subsidies
+
+For detailed documentation, see [SIMULATION_README.md](SIMULATION_README.md)
+
+### Running Tests
+
+Verify the simulation functionality:
+```bash
+python test_simulation.py
 ```
 
 The app will open in your default web browser. Use the sidebar sliders to adjust:
@@ -81,14 +121,17 @@ To enable the AI Economics Assistant feature:
 
 ## Educational Use
 
-This tool is perfect for:
-- Economics students learning consumer theory
-- Instructors demonstrating optimization concepts
-- Self-study of microeconomic principles
-- Visualizing the effects of price and income changes
+This toolkit is perfect for:
+- Economics students learning micro and macroeconomic concepts
+- Instructors demonstrating optimization, supply chains, and economic policy
+- Self-study of economic principles and simulation modeling
+- Understanding the effects of price changes, fiscal policy, and monetary policy
+- Visualizing complex economic systems and their interdependencies
+- Learning object-oriented programming through economic modeling
 
 ## Requirements
 
+### For Microeconomics Visualizer (Streamlit App)
 - Python 3.8 or higher
 - streamlit >= 1.28.0
 - numpy >= 1.24.0
@@ -96,6 +139,10 @@ This tool is perfect for:
 - sympy >= 1.12
 - openai >= 1.0.0 (for AI chat assistant)
 - python-dotenv >= 1.0.0 (for environment variable management)
+
+### For Economic Simulation
+- Python 3.8 or higher
+- **No external dependencies required** (uses only Python standard library)
 
 ## License
 
